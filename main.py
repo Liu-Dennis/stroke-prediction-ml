@@ -5,58 +5,28 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 
-class PredictionNet(nn.Module):
-    def __init__(self):
-        super(PredictionNet, self).__init__()
-        self.fc1 = nn.Linear(16, 64)
-        self.fc2 = nn.Linear(64, 32)
-        self.fc3 = nn.Linear(32, 1)
+class StrokePredictionNet(nn.Module):
+    def __init__(self, dropout=0.4):
+        super(StrokePredictionNet, self).__init__()
+
+        self.net = nn.Sequential(
+            nn.Linear(16, 16),
+            nn.ReLU(),
+            nn.Dropout(dropout),
+            nn.Linear(16, 16),
+            nn.ReLU(),
+            nn.Dropout(dropout),
+            nn.Linear(16, 1)
+        )
 
     def forward(self, x):
-        x = F.relu(self.fc1(x))
-        x = F.relu(self.fc2(x))
-        return self.fc3(x).squeeze(1)
-
-def train_model():
-    print("Loading dataset and training model...")
-    df = pd.read_csv('data/healthcare-dataset-stroke-data.csv')
-    if 'id' in df.columns:
-        df = df.drop(columns=['id'])
-
-    X_dataframe = df.iloc[:, :-1].copy()
-    Y_dataframe = df.iloc[:, -1].copy()
-
-    X_dataframe = pd.get_dummies(X_dataframe, drop_first=True)
-    X_dataframe = X_dataframe.apply(pd.to_numeric, errors='coerce').fillna(0.0)
-    Y_dataframe = pd.to_numeric(Y_dataframe, errors='coerce').fillna(0.0).astype(np.int64)
-
-    X_tensor = torch.from_numpy(X_dataframe.to_numpy(dtype=np.float32))
-    Y_tensor = torch.from_numpy(np.asarray(Y_dataframe, dtype=np.float32))
-
-    model = PredictionNet()
-    optimizer = optim.SGD(model.parameters(), lr=0.001, momentum=0.5)
-
-    model.train()
-    epochs = 10
-    batch_size = 64
-
-    for epoch in range(epochs):
-        for i in range(0, len(X_tensor), batch_size):
-            batch_x = X_tensor[i:i + batch_size]
-            batch_y = Y_tensor[i:i + batch_size]
-
-            optimizer.zero_grad()
-            output = model(batch_x)
-            loss = F.binary_cross_entropy_with_logits(output, batch_y)
-            loss.backward()
-            optimizer.step()
-
-    print("Training complete!\n")
-    return model
+        return self.net(x).squeeze(1)
 
 def main():
     # 1. Train model directly in memory
-    model = train_model()
+    model = StrokePredictionNet()
+    model.load_state_dict(torch.load('predictionNN.pth', weights_only=True))
+    model.eval()
 
     # 2. Collect user inputs
     gender = input("Gender (Male/Female/Other): ")
