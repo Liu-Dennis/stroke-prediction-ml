@@ -35,10 +35,10 @@ def main():
     heart_disease = int(input("Heart Disease (0/1): "))
     ever_married = input("Ever Married (Yes/No): ")
     work_type = input("Work Type (Private/Self-employed/Govt_job/children/Never_worked): ")
-    Residence_type = input("Residence Type (Urban/Rural): ")
+    residence_type = input("Residence Type (urban/rural): ")
     rtn_avg_glucose_level = float(input("Rtn Avg Glucose Level: "))
     bmi = float(input("BMI: "))
-    smoking_status = input("Smoking Status (formerly smoked/never smoked/smokes/Unknown): ")
+    smoking_status = input("Smoking Status (formerly_smoked/never_smoked/smokes/unknown): ")
 
     # 3. Format inputs to match model features
     user_dict = {
@@ -47,23 +47,29 @@ def main():
         'heart_disease': heart_disease,
         'avg_glucose_level': rtn_avg_glucose_level,
         'bmi': bmi,
-        'gender_' + gender: 1.0,
-        'ever_married_Yes': 1.0 if ever_married.lower() == 'yes' else 0.0,
-        'work_type_' + work_type: 1.0,
-        'Residence_type_' + Residence_type: 1.0,
-        'smoking_status_' + smoking_status: 1.0
+        'gender_' + gender.lower(): 1.0,
+        'ever_married_' + ever_married.lower(): 1.0 if ever_married.lower() == 'yes' else 0.0,
+        'work_type_' + work_type.lower(): 1.0,
+        'residence_type_' + residence_type.lower(): 1.0,
+        'smoking_status_' + smoking_status.lower(): 1.0
     }
 
     feature_template = {
-        'age': 0.0, 'hypertension': 0.0, 'heart_disease': 0.0,
-        'avg_glucose_level': 0.0, 'bmi': 0.0,
-        'gender_Male': 0.0, 'gender_Other': 0.0,
-        'ever_married_Yes': 0.0,
-        'work_type_Never_worked': 0.0, 'work_type_Private': 0.0,
-        'work_type_Self-employed': 0.0, 'work_type_children': 0.0,
-        'Residence_type_Urban': 0.0,
-        'smoking_status_formerly smoked': 0.0,
-        'smoking_status_never smoked': 0.0,
+        'age': 0.0, 
+        'hypertension': 0.0, 
+        'heart_disease': 0.0,
+        'avg_glucose_level': 0.0, 
+        'bmi': 0.0,
+        'gender_male': 0.0, 
+        'gender_other': 0.0,
+        'ever_married_yes': 0.0,
+        'work_type_never_worked': 0.0,
+        'work_type_private': 0.0,
+        'work_type_self_employed': 0.0,
+        'work_type_children': 0.0,
+        'residence_type_urban': 0.0,
+        'smoking_status_formerly_smoked': 0.0,
+        'smoking_status_never_smoked': 0.0,
         'smoking_status_smokes': 0.0
     }
 
